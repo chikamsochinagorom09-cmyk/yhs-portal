@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yeshua High School Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #8b1a1a;
+      --primary-light: #c0392b;
+      --gold: #c9a84c;
+      --bg: #f7f8fc;
+      --surface: #ffffff;
+      --border: #e2e6f0;
+      --text: #1a1a2e;
+      --text-dim: #5a6072;
+      --text-faint: #9ca3af;
+      --shadow: 0 2px 16px rgba(0,0,0,0.07);
+      --radius: 16px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* HEADER */
+    .header { background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); }
+    .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .logo { display: flex; align-items: center; gap: 12px; cursor: pointer; text-decoration: none; }
+    .logo-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
+    .logo-text { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--primary); line-height: 1.2; }
+    .logo-sub { font-size: 10px; color: var(--text-faint); font-family: 'DM Sans', sans-serif; font-weight: 400; display: block; }
+    .nav { display: flex; gap: 4px; align-items: center; }
+    .nav-btn { background: none; border: none; padding: 8px 14px; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-dim); transition: all 0.2s; }
+    .nav-btn:hover, .nav-btn.active { background: #f0f4ff; color: var(--primary); }
+    .nav-btn.accent { background: var(--primary); color: white; }
+    .nav-btn.accent:hover { background: var(--primary-light); }
+    .hamburger { display: none; background: none; border: none; font-size: 22px; cursor: pointer; }
+
+    /* SIDEBAR */
+    .layout { display: flex; max-width: 1200px; margin: 0 auto; padding: 24px; gap: 24px; }
+    .sidebar { width: 220px; flex-shrink: 0; }
+    .sidebar-menu { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); position: sticky; top: 88px; }
+    .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 13px 16px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-dim); border-left: 3px solid transparent; transition: all 0.2s; }
+    .sidebar-item:hover { background: #f8f9ff; color: var(--text); }
+    .sidebar-item.active { background: #fff5f5; color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+    .sidebar-icon { font-size: 16px; width: 20px; text-align: center; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+    /* MAIN CONTENT */
+    .content { flex: 1; min-width: 0; }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* CARDS */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; }
+    .card-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .card-sub { font-size: 13px; color: var(--text-faint); margin-bottom: 16px; }
+
+    /* DASHBOARD */
+    .dashboard-header { background: linear-gradient(135deg, var(--primary) 0%, #c0392b 100%); border-radius: var(--radius); padding: 32px; margin-bottom: 20px; color: white; position: relative; overflow: hidden; }
+    .dashboard-header::before { content: '✝'; position: absolute; right: 24px; top: 50%; transform: translateY(-50%); font-size: 80px; opacity: 0.1; }
+    .dashboard-greeting { font-size: 13px; opacity: 0.8; margin-bottom: 4px; }
+    .dashboard-name { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+    .dashboard-motto { font-size: 13px; opacity: 0.7; font-style: italic; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); text-align: center; }
+    .stat-icon { font-size: 24px; margin-bottom: 8px; }
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--primary); display: block; }
+    .stat-label { font-size: 12px; color: var(--text-faint); font-weight: 500; }
+    .quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+    .quick-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); cursor: pointer; transition: all 0.2s; text-align: center; }
+    .quick-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); border-color: var(--primary); }
+    .quick-icon { font-size: 32px; margin-bottom: 8px; display: block; }
+    .quick-label { font-size: 13px; font-weight: 600; color: var(--text); }
+    .quick-sub { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
+
+    /* DEVOTION */
+    .devotion-card { background: linear-gradient(135deg, #fff5f5, #fff); border: 1px solid #f5c6c6; border-radius: var(--radius); padding: 28px; margin-bottom: 20px; }
+    .devotion-verse { font-family: 'Playfair Display', serif; font-size: 20px; font-style: italic; color: var(--primary); line-height: 1.6; margin: 12px 0; }
+    .devotion-ref { font-size: 13px; font-weight: 600; color: var(--gold); font-family: 'DM Mono', monospace; }
+    .devotion-reflection { font-size: 14px; color: var(--text-dim); line-height: 1.7; margin-top: 12px; }
+
+    /* ANNOUNCEMENTS */
+    .announcement { border-left: 4px solid var(--primary); padding: 16px 20px; background: var(--surface); border-radius: 0 12px 12px 0; margin-bottom: 12px; box-shadow: var(--shadow); }
+    .ann-title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+    .ann-date { font-size: 11px; color: var(--text-faint); font-family: 'DM Mono', monospace; margin-bottom: 8px; }
+    .ann-body { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+    .ann-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; margin-left: 8px; }
+    .ann-urgent { background: #fee2e2; color: #991b1b; }
+    .ann-info { background: #dbeafe; color: #1e40af; }
+    .ann-event { background: #d1fae5; color: #065f46; }
+
+    /* TIMETABLE */
+    .timetable { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .timetable th { background: var(--primary); color: white; padding: 12px 16px; text-align: left; font-weight: 600; }
+    .timetable td { padding: 11px 16px; border-bottom: 1px solid var(--border); color: var(--text-dim); }
+    .timetable tr:hover td { background: #f8f9ff; }
+    .subject-tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .s-math { background: #dbeafe; color: #1e40af; }
+    .s-english { background: #d1fae5; color: #065f46; }
+    .s-science { background: #e0e7ff; color: #3730a3; }
+    .s-social { background: #fef3c7; color: #92400e; }
+    .s-agric { background: #dcfce7; color: #166534; }
+    .s-ict { background: #f0fdf4; color: #15803d; }
+    .s-bible { background: #fff5f5; color: #991b1b; }
+    .s-pe { background: #fdf4ff; color: #7e22ce; }
+
+    /* ASSIGNMENTS */
+    .assignment { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px; box-shadow: var(--shadow); }
+    .assign-check { width: 22px; height: 22px; border: 2px solid var(--border); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+    .assign-check.done { background: var(--primary); border-color: var(--primary); color: white; }
+    .assign-info { flex: 1; }
+    .assign-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+    .assign-title.done { text-decoration: line-through; color: var(--text-faint); }
+    .assign-meta { font-size: 12px; color: var(--text-faint); }
+    .assign-due { font-family: 'DM Mono', monospace; font-size: 11px; padding: 3px 10px; border-radius: 20px; }
+    .due-soon { background: #fee2e2; color: #991b1b; }
+    .due-ok { background: #d1fae5; color: #065f46; }
+
+    /* AI CHAT */
+    .chat-container { height: calc(100vh - 200px); display: flex; flex-direction: column; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 8px 0; display: flex; flex-direction: column; gap: 14px; }
+    .chat-bubble { display: flex; gap: 10px; align-items: flex-start; }
+    .chat-bubble.user { flex-direction: row-reverse; }
+    .chat-avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+    .chat-avatar.ai { background: linear-gradient(135deg, var(--primary), #c0392b); color: white; }
+    .chat-avatar.user { background: var(--bg); border: 2px solid var(--border); }
+    .chat-text { max-width: 75%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.65; white-space: pre-wrap; }
+    .chat-text.ai { background: var(--surface); border: 1px solid var(--border); border-radius: 4px 16px 16px 16px; color: var(--text); }
+    .chat-text.user { background: linear-gradient(135deg, var(--primary), #c0392b); color: white; border-radius: 16px 4px 16px 16px; }
+    .chat-input-row { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 10px 14px; display: flex; gap: 10px; align-items: flex-end; box-shadow: var(--shadow); margin-top: 12px; }
+    .chat-input { flex: 1; border: none; outline: none; resize: none; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: transparent; line-height: 1.5; max-height: 100px; }
+    .chat-send { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #c0392b); border: none; border-radius: 10px; cursor: pointer; color: white; font-size: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
+    .chat-suggestions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+    .chat-sug-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; cursor: pointer; text-align: left; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--text-dim); transition: all 0.2s; }
+    .chat-sug-btn:hover { border-color: var(--primary); color: var(--primary); background: #fff5f5; }
+    .typing-dots { display: flex; gap: 4px; padding: 14px 18px; }
+    .dot { width: 7px; height: 7px; background: var(--text-faint); border-radius: 50%; animation: bounce 1.2s infinite; }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%,60%,100% { transform:translateY(0); } 30% { transform:translateY(-6px); } }
+
+    /* NOTES */
+    .notes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .note-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); cursor: pointer; transition: all 0.2s; }
+    .note-card:hover { transform: translateY(-2px); border-color: var(--primary); }
+    .note-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+    .note-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+    .note-class { font-size: 11px; color: var(--text-faint); font-family: 'DM Mono', monospace; }
+
+    /* LEADERBOARD */
+    .leaderboard-item { display: flex; align-items: center; gap: 16px; padding: 14px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; box-shadow: var(--shadow); }
+    .lb-rank { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--text-faint); width: 32px; text-align: center; }
+    .lb-rank.gold { color: #f59e0b; }
+    .lb-rank.silver { color: #9ca3af; }
+    .lb-rank.bronze { color: #b45309; }
+    .lb-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #c0392b); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+    .lb-info { flex: 1; }
+    .lb-name { font-weight: 600; font-size: 14px; }
+    .lb-class { font-size: 11px; color: var(--text-faint); font-family: 'DM Mono', monospace; }
+    .lb-score { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--primary); }
+    .lb-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 4px; }
+    .lb-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #c0392b); border-radius: 2px; }
+
+    /* FORUM */
+    .forum-post { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; box-shadow: var(--shadow); }
+    .forum-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .forum-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #c0392b); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 700; }
+    .forum-meta { flex: 1; }
+    .forum-author { font-weight: 600; font-size: 13px; }
+    .forum-time { font-size: 11px; color: var(--text-faint); font-family: 'DM Mono', monospace; }
+    .forum-body { font-size: 14px; color: var(--text-dim); line-height: 1.65; margin-bottom: 10px; }
+    .forum-actions { display: flex; gap: 16px; }
+    .forum-action { background: none; border: none; font-size: 12px; color: var(--text-faint); cursor: pointer; display: flex; align-items: center; gap: 4px; font-family: 'DM Sans', sans-serif; }
+    .forum-action:hover { color: var(--primary); }
+    .forum-input { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; width: 100%; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); resize: none; outline: none; margin-bottom: 10px; }
+    .forum-input:focus { border-color: var(--primary); }
+
+    /* BUTTONS */
+    .btn { padding: 10px 20px; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-light); }
+    .btn-outline { background: none; border: 1px solid var(--border); color: var(--text-dim); }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* SECTION HEADER */
+    .section-header { margin-bottom: 20px; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+    .section-sub { font-size: 13px; color: var(--text-faint); }
+
+    /* TOAST */
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: white; padding: 12px 20px; border-radius: 12px; font-size: 13px; z-index: 999; box-shadow: 0 8px 24px rgba(0,0,0,0.2); animation: slideUp 0.3s ease; }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    /* LOGIN */
+    .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #fff5f5 0%, #f7f8fc 100%); }
+    .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 48px; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); text-align: center; }
+    .login-logo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin: 0 auto 16px; display: block; box-shadow: 0 0 0 8px rgba(139,26,26,0.08); }
+    .login-school { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+    .login-motto { font-size: 12px; color: var(--text-faint); font-style: italic; margin-bottom: 32px; }
+    .login-label { text-align: left; font-size: 11px; font-weight: 700; color: var(--text-faint); letter-spacing: 0.08em; display: block; margin-bottom: 6px; }
+    .login-input { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); outline: none; margin-bottom: 14px; transition: border 0.2s; }
+    .login-input:focus { border-color: var(--primary); }
+    .login-btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 4px; transition: all 0.2s; }
+    .login-btn:hover { background: var(--primary-light); }
+    .login-error { color: #991b1b; font-size: 12px; margin-bottom: 10px; background: #fee2e2; padding: 8px 12px; border-radius: 8px; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .layout { flex-direction: column; padding: 16px; }
+      .sidebar { width: 100%; }
+      .sidebar-menu { display: flex; overflow-x: auto; border-radius: 12px; }
+      .sidebar-item { flex-direction: column; gap: 4px; padding: 10px 14px; white-space: nowrap; border-left: none; border-bottom: 3px solid transparent; font-size: 11px; }
+      .sidebar-item.active { border-left: none; border-bottom-color: var(--primary); }
+      .sidebar-divider { display: none; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .quick-grid { grid-template-columns: repeat(2, 1fr); }
+      .notes-grid { grid-template-columns: repeat(2, 1fr); }
+      .chat-suggestions { grid-template-columns: 1fr; }
+      .hamburger { display: block; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="login-page">
+  <div class="login-card">
+    <img class="login-logo" src="https://via.placeholder.com/80x80/8b1a1a/ffffff?text=YHS" alt="YHS Logo" id="loginLogo" />
+    <div class="login-school">Yeshua High School</div>
+    <div class="login-motto">"Jesus Our Perfect Example"</div>
+    <label class="login-label">STUDENT ID</label>
+    <input class="login-input" type="text" id="loginId" placeholder="e.g. YHS001" />
+    <label class="login-label">PASSWORD</label>
+    <input class="login-input" type="password" id="loginPass" placeholder="Enter your password" />
+    <div class="login-error" id="loginError" style="display:none">Invalid Student ID or Password</div>
+    <button class="login-btn" onclick="doLogin()">Login to Portal →</button>
+    <p style="margin-top:16px;font-size:12px;color:var(--text-faint)">Demo: ID = <b>YHS001</b> · Password = <b>yhs2025</b></p>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" style="display:none">
+  <header class="header">
+    <div class="header-inner">
+      <a class="logo" onclick="showPage('dashboard')">
+        <img class="logo-img" src="https://via.placeholder.com/40x40/8b1a1a/ffffff?text=YHS" alt="YHS" id="headerLogo" />
+        <span class="logo-text">Yeshua High School<span class="logo-sub">Student Portal</span></span>
+      </a>
+      <nav class="nav">
+        <button class="nav-btn" onclick="showPage('dashboard')">🏠 Home</button>
+        <button class="nav-btn" onclick="showPage('assistant')">🤖 AI Assistant</button>
+        <button class="nav-btn" onclick="showPage('voting')" id="votingNavBtn">🗳️ Vote</button>
+        <button class="nav-btn accent" onclick="doLogout()">Logout</button>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-menu">
+        <div class="sidebar-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+          <span class="sidebar-icon">🏠</span> Dashboard
+        </div>
+        <div class="sidebar-item" onclick="showPage('devotion')" id="nav-devotion">
+          <span class="sidebar-icon">🙏</span> Devotion
+        </div>
+        <div class="sidebar-item" onclick="showPage('announcements')" id="nav-announcements">
+          <span class="sidebar-icon">📢</span> Announcements
+        </div>
+        <div class="sidebar-item" onclick="showPage('timetable')" id="nav-timetable">
+          <span class="sidebar-icon">📅</span> Timetable
+        </div>
+        <div class="sidebar-item" onclick="showPage('assignments')" id="nav-assignments">
+          <span class="sidebar-icon">📝</span> Assignments
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-item" onclick="showPage('notes')" id="nav-notes">
+          <span class="sidebar-icon">📚</span> Study Notes
+        </div>
+        <div class="sidebar-item" onclick="showPage('assistant')" id="nav-assistant">
+          <span class="sidebar-icon">🤖</span> AI Assistant
+        </div>
+        <div class="sidebar-item" onclick="showPage('leaderboard')" id="nav-leaderboard">
+          <span class="sidebar-icon">🏆</span> Leaderboard
+        </div>
+        <div class="sidebar-item" onclick="showPage('forum')" id="nav-forum">
+          <span class="sidebar-icon">💬</span> Forum
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-item" onclick="showPage('voting')" id="nav-voting">
+          <span class="sidebar-icon">🗳️</span> E-Voting
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="dashboard-header">
+          <div class="dashboard-greeting">Welcome back 👋</div>
+          <div class="dashboard-name" id="studentName">Student</div>
+          <div class="dashboard-motto">Jesus Our Perfect Example</div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon">📝</div><span class="stat-num">3</span><span class="stat-label">Assignments Due</span></div>
+          <div class="stat-card"><div class="stat-icon">📢</div><span class="stat-num">5</span><span class="stat-label">Announcements</span></div>
+          <div class="stat-card"><div class="stat-icon">🏆</div><span class="stat-num">#4</span><span class="stat-label">Your Rank</span></div>
+          <div class="stat-card"><div class="stat-icon">🗳️</div><span class="stat-num">12</span><span class="stat-label">Active Elections</span></div>
+        </div>
+        <div class="devotion-card">
+          <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:0.1em;font-family:'DM Mono',monospace">✝ TODAY'S DEVOTION</div>
+          <div class="devotion-verse">"I can do all things through Christ who strengthens me."</div>
+          <div class="devotion-ref">Philippians 4:13</div>
+          <div class="devotion-reflection">Start this day with confidence. Whatever challenge you face — exams, relationships, assignments — Christ gives you the strength to overcome. Trust Him today.</div>
+        </div>
+        <div class="section-header"><div class="section-title">Quick Access</div></div>
+        <div class="quick-grid">
+          <div class="quick-card" onclick="showPage('assistant')"><span class="quick-icon">🤖</span><div class="quick-label">AI Assistant</div><div class="quick-sub">Get homework help</div></div>
+          <div class="quick-card" onclick="showPage('timetable')"><span class="quick-icon">📅</span><div class="quick-label">My Timetable</div><div class="quick-sub">View class schedule</div></div>
+          <div class="quick-card" onclick="showPage('assignments')"><span class="quick-icon">📝</span><div class="quick-label">Assignments</div><div class="quick-sub">3 due this week</div></div>
+          <div class="quick-card" onclick="showPage('notes')"><span class="quick-icon">📚</span><div class="quick-label">Study Notes</div><div class="quick-sub">All subjects</div></div>
+          <div class="quick-card" onclick="showPage('leaderboard')"><span class="quick-icon">🏆</span><div class="quick-label">Leaderboard</div><div class="quick-sub">Top students</div></div>
+          <div class="quick-card" onclick="showPage('voting')"><span class="quick-icon">🗳️</span><div class="quick-label">E-Voting</div><div class="quick-sub">Cast your vote</div></div>
+        </div>
+      </div>
+
+      <!-- DEVOTION -->
+      <div class="page" id="page-devotion">
+        <div class="section-header"><div class="section-title">🙏 Daily Devotion</div><div class="section-sub">Start each day with God's Word</div></div>
+        <div class="devotion-card">
+          <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:0.1em;font-family:'DM Mono',monospace">✝ MONDAY — STRENGTH</div>
+          <div class="devotion-verse">"I can do all things through Christ who strengthens me."</div>
+          <div class="devotion-ref">Philippians 4:13</div>
+          <div class="devotion-reflection">Whatever challenges you face today — difficult exams, tough relationships, or heavy assignments — remember that your strength comes from Christ. You are never alone in your struggles. Trust Him, lean on Him, and watch Him turn your weakness into victory. Today, choose faith over fear.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">This Week's Devotions</div>
+          <div class="card-sub">Click on any day to read</div>
+          <div id="devotionList"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">🎵 Worship Songs for the Week</div>
+          <div class="card-sub">Songs to lift your spirit</div>
+          <div id="worshipList"></div>
+        </div>
+      </div>
+
+      <!-- ANNOUNCEMENTS -->
+      <div class="page" id="page-announcements">
+        <div class="section-header"><div class="section-title">📢 Announcements</div><div class="section-sub">Important updates from the school</div></div>
+        <div id="announcementList"></div>
+      </div>
+
+      <!-- TIMETABLE -->
+      <div class="page" id="page-timetable">
+        <div class="section-header"><div class="section-title">📅 Class Timetable</div><div class="section-sub">Your weekly schedule</div></div>
+        <div class="card" style="overflow-x:auto">
+          <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+            <button class="btn btn-primary" id="classBtn" onclick="switchClass(this,'JSS1A')">JSS 1A</button>
+            <button class="btn btn-outline" onclick="switchClass(this,'JSS2A')">JSS 2A</button>
+            <button class="btn btn-outline" onclick="switchClass(this,'JSS3A')">JSS 3A</button>
+            <button class="btn btn-outline" onclick="switchClass(this,'SS1A')">SS 1A</button>
+            <button class="btn btn-outline" onclick="switchClass(this,'SS2A')">SS 2A</button>
+            <button class="btn btn-outline" onclick="switchClass(this,'SS3A')">SS 3A</button>
+          </div>
+          <table class="timetable" id="timetableTable"></table>
+        </div>
+      </div>
+
+      <!-- ASSIGNMENTS -->
+      <div class="page" id="page-assignments">
+        <div class="section-header"><div class="section-title">📝 Assignments</div><div class="section-sub">Track your homework and submissions</div></div>
+        <div class="card">
+          <div style="display:flex;gap:8px;margin-bottom:16px">
+            <button class="btn btn-primary" onclick="filterAssign('all')">All</button>
+            <button class="btn btn-outline" onclick="filterAssign('pending')">Pending</button>
+            <button class="btn btn-outline" onclick="filterAssign('done')">Completed</button>
+          </div>
+          <div id="assignmentList"></div>
+        </div>
+      </div>
+
+      <!-- NOTES -->
+      <div class="page" id="page-notes">
+        <div class="section-header"><div class="section-title">📚 Study Notes</div><div class="section-sub">Resources and materials for all subjects</div></div>
+        <div class="notes-grid" id="notesList"></div>
+      </div>
+
+      <!-- AI ASSISTANT -->
+      <div class="page" id="page-assistant">
+        <div class="section-header"><div class="section-title">🤖 YHS AI Assistant</div><div class="section-sub">Powered by AI · Ask anything — homework, Bible verses, motivation</div></div>
+        <div class="chat-container">
+          <div id="chatMessages" class="chat-messages">
+            <div class="chat-bubble">
+              <div class="chat-avatar ai">✝</div>
+              <div class="chat-text ai">Shalom! 👋 I'm your YHS AI Assistant. I'm here to help you with homework, Bible verses, study tips, and motivation. How can I help you today?</div>
+            </div>
+          </div>
+          <div id="chatSuggestions" class="chat-suggestions">
+            <button class="chat-sug-btn" onclick="sendSug(this)">📐 Help with Maths homework</button>
+            <button class="chat-sug-btn" onclick="sendSug(this)">📖 Give me a Bible verse for today</button>
+            <button class="chat-sug-btn" onclick="sendSug(this)">💪 Give me a motivational message</button>
+            <button class="chat-sug-btn" onclick="sendSug(this)">🎓 Tips for passing exams</button>
+          </div>
+          <div class="chat-input-row">
+            <textarea class="chat-input" id="chatInput" rows="1" placeholder="Ask me anything..." onkeydown="handleChatKey(event)"></textarea>
+            <button class="chat-send" id="chatSendBtn" onclick="sendChat()">➤</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEADERBOARD -->
+      <div class="page" id="page-leaderboard">
+        <div class="section-header"><div class="section-title">🏆 Student Leaderboard</div><div class="section-sub">Top performing students this term</div></div>
+        <div class="card">
+          <div id="leaderboardList"></div>
+        </div>
+      </div>
+
+      <!-- FORUM -->
+      <div class="page" id="page-forum">
+        <div class="section-header"><div class="section-title">💬 Student Forum</div><div class="section-sub">Share, discuss and support each other</div></div>
+        <div class="card">
+          <textarea class="forum-input" id="forumInput" rows="3" placeholder="Share something with your fellow students..."></textarea>
+          <button class="btn btn-primary" onclick="postForum()">Post →</button>
+        </div>
+        <div id="forumPosts"></div>
+      </div>
+
+      <!-- VOTING -->
+      <div class="page" id="page-voting">
+        <div class="section-header"><div class="section-title">🗳️ E-Voting</div><div class="section-sub">Cast your vote for school prefects</div></div>
+        <div class="card" style="text-align:center;padding:40px">
+          <div style="font-size:48px;margin-bottom:16px">🗳️</div>
+          <div class="card-title">Yeshua High School E-Voting Portal</div>
+          <p style="color:var(--text-dim);font-size:14px;margin:12px 0 24px">Cast your vote for the school prefects. Your vote is secure and anonymous.</p>
+          <a href="https://yhs-voting.vercel.app" target="_blank" class="btn btn-primary" style="text-decoration:none;display:inline-block;padding:14px 32px;font-size:15px">Open Voting Portal →</a>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast" style="display:none"></div>
+
+<script>
+// ========== DATA ==========
+const STUDENTS = [
+  { id: "YHS001", name: "Chikamso Chinagorom", class: "SS2A", password: "yhs2025" },
+  { id: "YHS002", name: "Adaeze Okafor", class: "SS1A", password: "yhs2025" },
+  { id: "YHS003", name: "Emeka Nwosu", class: "JSS3A", password: "yhs2025" },
+];
+
+const ANNOUNCEMENTS = [
+  { title: "End of Term Examination", badge: "urgent", badgeLabel: "URGENT", date: "April 10, 2025", body: "End of term examinations will commence on April 28th, 2025. All students are advised to begin preparation immediately. Timetables will be shared next week." },
+  { title: "Inter-House Sports Competition", badge: "event", badgeLabel: "EVENT", date: "April 8, 2025", body: "The annual inter-house sports competition holds on April 19th. All students are encouraged to participate. Practice sessions begin this Monday after school." },
+  { title: "School Fees Reminder", badge: "info", badgeLabel: "INFO", date: "April 5, 2025", body: "Parents are reminded that second term school fees are due by April 20th. Late payment attracts a surcharge of ₦5,000." },
+  { title: "Chapel Service — Special Guest", badge: "event", badgeLabel: "EVENT", date: "April 3, 2025", body: "We will be hosting Pastor Emmanuel Obi this Friday for a special chapel service. Attendance is compulsory for all students." },
+  { title: "Library Hours Extended", badge: "info", badgeLabel: "INFO", date: "March 30, 2025", body: "The school library will now be open from 7am to 7pm Monday through Friday to support students preparing for exams." },
+];
+
+const TIMETABLES = {
+  JSS1A: [
+    ["8:00-8:45", "Mathematics", "9:00-9:45", "English Language", "10:00-10:45", "Basic Science", "11:00-11:45", "Social Studies"],
+    ["8:00-8:45", "English Language", "9:00-9:45", "Mathematics", "10:00-10:45", "Agric Science", "11:00-11:45", "Bible Knowledge"],
+    ["8:00-8:45", "Basic Science", "9:00-9:45", "ICT", "10:00-10:45", "Mathematics", "11:00-11:45", "Physical Education"],
+    ["8:00-8:45", "Social Studies", "9:00-9:45", "English Language", "10:00-10:45", "Agric Science", "11:00-11:45", "Mathematics"],
+    ["8:00-8:45", "Bible Knowledge", "9:00-9:45", "Basic Science", "10:00-10:45", "English Language", "11:00-11:45", "ICT"],
+  ],
+  SS2A: [
+    ["8:00-8:45", "Further Maths", "9:00-9:45", "English Language", "10:00-10:45", "Physics", "11:00-11:45", "Chemistry"],
+    ["8:00-8:45", "Mathematics", "9:00-9:45", "Biology", "10:00-10:45", "Further Maths", "11:00-11:45", "Economics"],
+    ["8:00-8:45", "Physics", "9:00-9:45", "Chemistry", "10:00-10:45", "Mathematics", "11:00-11:45", "Bible Knowledge"],
+    ["8:00-8:45", "Economics", "9:00-9:45", "English Language", "10:00-10:45", "Biology", "11:00-11:45", "Further Maths"],
+    ["8:00-8:45", "Bible Knowledge", "9:00-9:45", "Physics", "10:00-10:45", "English Language", "11:00-11:45", "Mathematics"],
+  ],
+};
+
+const ASSIGNMENTS = [
+  { id: 1, title: "Mathematics — Quadratic Equations (Exercise 5.3)", subject: "Mathematics", due: "Apr 15", urgent: true, done: false },
+  { id: 2, title: "English — Write a formal letter to your principal", subject: "English", due: "Apr 17", urgent: false, done: false },
+  { id: 3, title: "Physics — Complete Chapter 8 questions", subject: "Physics", due: "Apr 18", urgent: false, done: false },
+  { id: 4, title: "Chemistry — Periodic table worksheet", subject: "Chemistry", due: "Apr 12", urgent: true, done: false },
+  { id: 5, title: "Bible Knowledge — Summarize Acts Chapter 2", subject: "Bible Knowledge", due: "Apr 20", urgent: false, done: true },
+];
+
+const NOTES = [
+  { icon: "📐", title: "Mathematics", topics: ["Algebra", "Geometry", "Statistics", "Quadratic Equations"] },
+  { icon: "📖", title: "English Language", topics: ["Essay Writing", "Comprehension", "Grammar"] },
+  { icon: "⚗️", title: "Chemistry", topics: ["Periodic Table", "Acids & Bases", "Organic Chemistry"] },
+  { icon: "🔬", title: "Physics", topics: ["Mechanics", "Electricity", "Waves", "Optics"] },
+  { icon: "🌿", title: "Biology", topics: ["Cell Biology", "Genetics", "Ecology"] },
+  { icon: "🌍", title: "Geography", topics: ["Map Reading", "Climate", "Population"] },
+  { icon: "📜", title: "History", topics: ["Pre-colonial Nigeria", "Independence", "Civil War"] },
+  { icon: "✝️", title: "Bible Knowledge", topics: ["Old Testament", "New Testament", "Epistles"] },
+  { icon: "💻", title: "ICT", topics: ["MS Office", "Internet", "Programming Basics"] },
+];
+
+const LEADERBOARD = [
+  { name: "Adaeze Okafor", class: "SS2A", score: 98, initials: "AO" },
+  { name: "Emeka Nwosu", class: "SS1A", score: 95, initials: "EN" },
+  { name: "Fatima Bello", class: "SS3A", score: 93, initials: "FB" },
+  { name: "Chikamso Chinagorom", class: "SS2A", score: 91, initials: "CC" },
+  { name: "David Okonkwo", class: "JSS3A", score: 89, initials: "DO" },
+  { name: "Peace Ugwu", class: "SS1A", score: 87, initials: "PU" },
+  { name: "Samuel Balogun", class: "SS2A", score: 85, initials: "SB" },
+  { name: "Ruth Olawale", class: "JSS3A", score: 84, initials: "RO" },
+];
+
+const DEVOTIONS = [
+  { day: "Monday", theme: "Strength", verse: '"I can do all things through Christ who strengthens me."', ref: "Philippians 4:13" },
+  { day: "Tuesday", theme: "Wisdom", verse: '"If any of you lacks wisdom, let him ask God, who gives generously."', ref: "James 1:5" },
+  { day: "Wednesday", theme: "Courage", verse: '"Be strong and courageous. Do not be afraid; do not be discouraged."', ref: "Joshua 1:9" },
+  { day: "Thursday", theme: "Hope", verse: '"For I know the plans I have for you, plans to prosper you and not to harm you."', ref: "Jeremiah 29:11" },
+  { day: "Friday", theme: "Excellence", verse: '"Whatever you do, work heartily, as for the Lord and not for men."', ref: "Colossians 3:23" },
+];
+
+const WORSHIP = ["Way Maker — Sinach", "Oceans — Hillsong United", "Goodness of God — Bethel Music", "What a Beautiful Name — Hillsong", "So Will I — Hillsong United"];
+
+const FORUM_DATA = [
+  { author: "Adaeze O.", initials: "AO", time: "2 hours ago", body: "Has anyone finished the Physics assignment on Chapter 8? I'm stuck on question 5 about wave frequency 🙏", likes: 4 },
+  { author: "Emeka N.", initials: "EN", time: "3 hours ago", body: "The Bible Knowledge class today was so inspiring! Pastor's teaching on Acts 2 really touched my heart. Remember: 'They devoted themselves to the apostles' teaching and to fellowship' (Acts 2:42)", likes: 8 },
+  { author: "Fatima B.", initials: "FB", time: "5 hours ago", body: "Reminder to everyone — Library is open till 7pm this week! Great time to study for the upcoming exams. I'll be there from 4pm 📚", likes: 12 },
+];
+
+// ========== STATE ==========
+let currentStudent = null;
+let chatMessages = [];
+let chatLoading = false;
+let assignments = [...ASSIGNMENTS];
+let forumPosts = [...FORUM_DATA];
+let currentClass = 'JSS1A';
+
+const API_KEY = "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";
+const SYSTEM_PROMPT = `You are the official AI Assistant for Yeshua High School, Nigeria. Your name is "YHS Assistant". You help secondary school students (JSS1-SS3) with: homework, academic questions, Bible verses, Christian devotions, motivational messages, study tips, and school-related questions. Be warm, encouraging, and faith-based. School motto: "Jesus Our Perfect Example". Always end with a short encouraging note or Bible verse when appropriate.`;
+
+// ========== LOGIN ==========
+function doLogin() {
+  const id = document.getElementById('loginId').value.trim().toUpperCase();
+  const pass = document.getElementById('loginPass').value.trim();
+  const student = STUDENTS.find(s => s.id === id && s.password === pass);
+  if (student) {
+    currentStudent = student;
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    document.getElementById('studentName').textContent = student.name;
+    renderAll();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function doLogout() {
+  currentStudent = null;
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('loginId').value = '';
+  document.getElementById('loginPass').value = '';
+}
+
+// ========== NAVIGATION ==========
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  const nav = document.getElementById('nav-' + name);
+  if (nav) nav.classList.add('active');
+}
+
+// ========== RENDER ==========
+function renderAll() {
+  renderAnnouncements();
+  renderTimetable('JSS1A');
+  renderAssignments('all');
+  renderNotes();
+  renderLeaderboard();
+  renderDevotions();
+  renderForum();
+}
+
+function renderAnnouncements() {
+  const el = document.getElementById('announcementList');
+  el.innerHTML = ANNOUNCEMENTS.map(a => `
+    <div class="announcement">
+      <div class="ann-title">${a.title} <span class="ann-badge ann-${a.badge}">${a.badgeLabel}</span></div>
+      <div class="ann-date">${a.date}</div>
+      <div class="ann-body">${a.body}</div>
+    </div>
+  `).join('');
+}
+
+const subjectColors = { Mathematics: 's-math', 'English Language': 's-english', Physics: 's-science', Chemistry: 's-science', Biology: 's-science', 'Basic Science': 's-science', 'Social Studies': 's-social', 'Agric Science': 's-agric', ICT: 's-ict', 'Bible Knowledge': 's-bible', 'Physical Education': 's-pe', Economics: 's-social', 'Further Maths': 's-math', Geography: 's-social', History: 's-social' };
+const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+function renderTimetable(cls) {
+  const data = TIMETABLES[cls] || TIMETABLES['JSS1A'];
+  const table = document.getElementById('timetableTable');
+  const periods = ['Period 1', 'Period 2', 'Period 3', 'Period 4'];
+  let html = '<thead><tr><th>Day</th>' + periods.map((p,i) => `<th>${p}<br><small style="opacity:0.7">${data[0][i*2]}</small></th>`).join('') + '</tr></thead><tbody>';
+  data.forEach((row, i) => {
+    html += `<tr><td><strong>${days[i]}</strong></td>`;
+    for (let j = 0; j < 4; j++) {
+      const subj = row[j*2+1] || '—';
+      const color = subjectColors[subj] || '';
+      html += `<td><span class="subject-tag ${color}">${subj}</span></td>`;
+    }
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+function switchClass(btn, cls) {
+  document.querySelectorAll('#page-timetable .btn').forEach(b => { b.className = 'btn btn-outline'; });
+  btn.className = 'btn btn-primary';
+  renderTimetable(cls);
+}
+
+function renderAssignments(filter) {
+  const el = document.getElementById('assignmentList');
+  const list = filter === 'done' ? assignments.filter(a => a.done) : filter === 'pending' ? assignments.filter(a => !a.done) : assignments;
+  el.innerHTML = list.map(a => `
+    <div class="assignment">
+      <div class="assign-check ${a.done ? 'done' : ''}" onclick="toggleAssign(${a.id})">${a.done ? '✓' : ''}</div>
+      <div class="assign-info">
+        <div class="assign-title ${a.done ? 'done' : ''}">${a.title}</div>
+        <div class="assign-meta">${a.subject}</div>
+      </div>
+      <span class="assign-due ${a.urgent ? 'due-soon' : 'due-ok'}">Due ${a.due}</span>
+    </div>
+  `).join('');
+}
+
+function toggleAssign(id) {
+  const a = assignments.find(a => a.id === id);
+  if (a) { a.done = !a.done; renderAssignments('all'); }
+}
+
+function filterAssign(f) { renderAssignments(f); }
+
+function renderNotes() {
+  const el = document.getElementById('notesList');
+  el.innerHTML = NOTES.map(n => `
+    <div class="note-card" onclick="showToast('Opening ${n.title} notes...')">
+      <span class="note-icon">${n.icon}</span>
+      <div class="note-title">${n.title}</div>
+      <div class="note-class">${n.topics.slice(0,2).join(' · ')}</div>
+    </div>
+  `).join('');
+}
+
+function renderLeaderboard() {
+  const el = document.getElementById('leaderboardList');
+  const ranks = ['🥇', '🥈', '🥉'];
+  const rankClasses = ['gold', 'silver', 'bronze'];
+  el.innerHTML = LEADERBOARD.map((s, i) => `
+    <div class="leaderboard-item">
+      <div class="lb-rank ${rankClasses[i] || ''}">${ranks[i] || (i+1)}</div>
+      <div class="lb-avatar">${s.initials}</div>
+      <div class="lb-info">
+        <div class="lb-name">${s.name}</div>
+        <div class="lb-class">${s.class}</div>
+        <div class="lb-bar"><div class="lb-bar-fill" style="width:${s.score}%"></div></div>
+      </div>
+      <div class="lb-score">${s.score}%</div>
+    </div>
+  `).join('');
+}
+
+function renderDevotions() {
+  const el = document.getElementById('devotionList');
+  el.innerHTML = DEVOTIONS.map(d => `
+    <div class="announcement" style="cursor:pointer;margin-bottom:8px">
+      <div class="ann-title">${d.day} <span class="ann-badge ann-info">${d.theme.toUpperCase()}</span></div>
+      <div class="devotion-verse" style="font-size:15px;margin:8px 0">${d.verse}</div>
+      <div class="ann-date">${d.ref}</div>
+    </div>
+  `).join('');
+  document.getElementById('worshipList').innerHTML = WORSHIP.map(w => `
+    <div style="padding:12px 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--text-dim)">🎵 ${w}</div>
+  `).join('');
+}
+
+function renderForum() {
+  const el = document.getElementById('forumPosts');
+  el.innerHTML = forumPosts.map((p, i) => `
+    <div class="forum-post">
+      <div class="forum-header">
+        <div class="forum-avatar">${p.initials}</div>
+        <div class="forum-meta"><div class="forum-author">${p.author}</div><div class="forum-time">${p.time}</div></div>
+      </div>
+      <div class="forum-body">${p.body}</div>
+      <div class="forum-actions">
+        <button class="forum-action" onclick="likePost(${i})">❤️ ${p.likes}</button>
+        <button class="forum-action">💬 Reply</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function likePost(i) { forumPosts[i].likes++; renderForum(); }
+
+function postForum() {
+  const input = document.getElementById('forumInput');
+  const text = input.value.trim();
+  if (!text) return;
+  forumPosts.unshift({ author: currentStudent?.name || "Student", initials: (currentStudent?.name || "ST").slice(0,2).toUpperCase(), time: "Just now", body: text, likes: 0 });
+  input.value = '';
+  renderForum();
+  showToast("Posted successfully!");
+}
+
+// ========== AI CHAT ==========
+function handleChatKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } }
+
+function sendSug(btn) {
+  document.getElementById('chatSuggestions').style.display = 'none';
+  document.getElementById('chatInput').value = btn.textContent.replace(/^[^\s]+\s/, '');
+  sendChat();
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text || chatLoading) return;
+  input.value = '';
+  chatLoading = true;
+  document.getElementById('chatSendBtn').disabled = true;
+  const msgs = document.getElementById('chatMessages');
+
+  chatMessages.push({ role: "user", content: text });
+  msgs.innerHTML += `<div class="chat-bubble user"><div class="chat-avatar user">👤</div><div class="chat-text user">${text}</div></div>`;
+
+  const typingId = 'typing-' + Date.now();
+  msgs.innerHTML += `<div class="chat-bubble" id="${typingId}"><div class="chat-avatar ai">✝</div><div class="chat-text ai" style="padding:0"><div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": API_KEY,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 1000, system: SYSTEM_PROMPT, messages: chatMessages })
+    });
+    const data = await res.json();
+    const reply = data.error ? "Sorry, I couldn't respond right now. Please try again! 🙏" : (data.content?.[0]?.text || "No response received.");
+    chatMessages.push({ role: "assistant", content: reply });
+    document.getElementById(typingId).outerHTML = `<div class="chat-bubble"><div class="chat-avatar ai">✝</div><div class="chat-text ai">${reply.replace(/\n/g, '<br>')}</div></div>`;
+  } catch {
+    document.getElementById(typingId).outerHTML = `<div class="chat-bubble"><div class="chat-avatar ai">✝</div><div class="chat-text ai">Sorry, I'm having trouble connecting. Please check your internet! 🙏</div></div>`;
+  }
+
+  chatLoading = false;
+  document.getElementById('chatSendBtn').disabled = false;
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ========== TOAST ==========
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+</script>
+</body>
+</html>
