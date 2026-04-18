@@ -387,7 +387,14 @@
 
       <!-- NOTES -->
       <div class="page" id="page-notes">
-        <div class="section-header"><div class="section-title">📚 Study Notes</div><div class="section-sub">Resources and materials for all subjects</div></div>
+        <div class="section-header"><div class="section-title">📚 Study Notes</div><div class="section-sub">All subjects by department — JSS Core, Science, Art & Commercial</div></div>
+        <div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="filterNotes('all',this)">All</button>
+          <button class="btn btn-outline" onclick="filterNotes('Core',this)">📚 JSS Core</button>
+          <button class="btn btn-outline" onclick="filterNotes('Science',this)">🔬 Science</button>
+          <button class="btn btn-outline" onclick="filterNotes('Art',this)">🎨 Art</button>
+          <button class="btn btn-outline" onclick="filterNotes('Commercial',this)">💼 Commercial</button>
+        </div>
         <div class="notes-grid" id="notesList"></div>
       </div>
 
@@ -491,15 +498,75 @@ const ASSIGNMENTS = [
 ];
 
 const NOTES = [
-  { icon: "📐", title: "Mathematics", topics: ["Algebra", "Geometry", "Statistics", "Quadratic Equations"] },
-  { icon: "📖", title: "English Language", topics: ["Essay Writing", "Comprehension", "Grammar"] },
-  { icon: "⚗️", title: "Chemistry", topics: ["Periodic Table", "Acids & Bases", "Organic Chemistry"] },
-  { icon: "🔬", title: "Physics", topics: ["Mechanics", "Electricity", "Waves", "Optics"] },
-  { icon: "🌿", title: "Biology", topics: ["Cell Biology", "Genetics", "Ecology"] },
-  { icon: "🌍", title: "Geography", topics: ["Map Reading", "Climate", "Population"] },
-  { icon: "📜", title: "History", topics: ["Pre-colonial Nigeria", "Independence", "Civil War"] },
-  { icon: "✝️", title: "Bible Knowledge", topics: ["Old Testament", "New Testament", "Epistles"] },
-  { icon: "💻", title: "ICT", topics: ["MS Office", "Internet", "Programming Basics"] },
+  // ===== JSS CORE (All Students) =====
+  { icon: "📐", title: "Mathematics", topics: ["Algebra", "Geometry", "Statistics", "Number Theory"], level: "JSS", dept: "Core" },
+  { icon: "📖", title: "English Language", topics: ["Essay Writing", "Comprehension", "Grammar", "Summary"], level: "JSS", dept: "Core" },
+  { icon: "🔬", title: "Basic Science", topics: ["Matter", "Energy", "Living Things", "Environment"], level: "JSS", dept: "Core" },
+  { icon: "🔧", title: "Basic Technology", topics: ["Workshop Practice", "Electronics", "Woodwork", "Metalwork"], level: "JSS", dept: "Core" },
+  { icon: "🌍", title: "Social Studies", topics: ["Family", "Community", "Government", "National Values"], level: "JSS", dept: "Core" },
+  { icon: "✝️", title: "Christian Religious Studies (CRS)", topics: ["Old Testament", "New Testament", "Epistles", "Acts"], level: "JSS", dept: "Core" },
+  { icon: "☪️", title: "Islamic Religious Studies (IRS)", topics: ["Quran", "Hadith", "Islamic History", "Pillars"], level: "JSS", dept: "Core" },
+  { icon: "🏛️", title: "Civic Education", topics: ["Democracy", "Human Rights", "Citizenship", "National Values"], level: "JSS", dept: "Core" },
+  { icon: "💻", title: "Computer Studies", topics: ["MS Office", "Internet", "Programming", "Hardware"], level: "JSS", dept: "Core" },
+  { icon: "🌾", title: "Agricultural Science", topics: ["Crop Production", "Animal Husbandry", "Soil Science"], level: "JSS", dept: "Core" },
+  { icon: "🏠", title: "Home Economics", topics: ["Food & Nutrition", "Clothing", "Home Management"], level: "JSS", dept: "Core" },
+  { icon: "🎨", title: "Fine Art", topics: ["Drawing", "Painting", "Sculpture", "Art History"], level: "JSS", dept: "Core" },
+  { icon: "🎵", title: "Music", topics: ["Music Theory", "Notation", "African Music", "Instruments"], level: "JSS", dept: "Core" },
+  { icon: "🏃", title: "Physical Education", topics: ["Athletics", "Team Sports", "Health Education", "Games"], level: "JSS", dept: "Core" },
+  { icon: "🇫🇷", title: "French", topics: ["Grammar", "Vocabulary", "Oral French", "Comprehension"], level: "JSS", dept: "Core" },
+  { icon: "🗣️", title: "Yoruba", topics: ["Grammar", "Oral", "Comprehension", "Literature"], level: "JSS", dept: "Core" },
+  { icon: "🗣️", title: "Igbo", topics: ["Grammar", "Oral", "Comprehension", "Vocabulary"], level: "JSS", dept: "Core" },
+  { icon: "📋", title: "Business Studies", topics: ["Office Practice", "Keyboarding", "Commerce Basics"], level: "JSS", dept: "Core" },
+  { icon: "📜", title: "History", topics: ["Pre-colonial Nigeria", "Independence", "Civil War"], level: "JSS", dept: "Core" },
+
+  // ===== SS CORE (All SS Students) =====
+  { icon: "📐", title: "Mathematics", topics: ["Algebra", "Trigonometry", "Statistics", "Calculus Intro"], level: "SS", dept: "Core" },
+  { icon: "📖", title: "English Language", topics: ["Essay Writing", "Comprehension", "Oral English", "Summary"], level: "SS", dept: "Core" },
+  { icon: "🏛️", title: "Civic Education", topics: ["Democracy", "Human Rights", "Rule of Law", "Governance"], level: "SS", dept: "Core" },
+  { icon: "✝️", title: "CRS", topics: ["Old Testament", "New Testament", "Epistles", "Church History"], level: "SS", dept: "Core" },
+  { icon: "☪️", title: "IRS", topics: ["Quran", "Hadith", "Islamic Jurisprudence", "History"], level: "SS", dept: "Core" },
+
+  // ===== SCIENCE DEPARTMENT =====
+  { icon: "📐", title: "Further Mathematics", topics: ["Calculus", "Matrices", "Complex Numbers", "Vectors", "Mechanics"], level: "SS", dept: "Science" },
+  { icon: "⚗️", title: "Chemistry", topics: ["Periodic Table", "Acids & Bases", "Organic Chemistry", "Electrolysis", "Kinetics"], level: "SS", dept: "Science" },
+  { icon: "🔭", title: "Physics", topics: ["Mechanics", "Electricity", "Waves", "Optics", "Thermodynamics", "Modern Physics"], level: "SS", dept: "Science" },
+  { icon: "🌿", title: "Biology", topics: ["Cell Biology", "Genetics", "Ecology", "Reproduction", "Evolution"], level: "SS", dept: "Science" },
+  { icon: "🌾", title: "Agricultural Science", topics: ["Crop Production", "Animal Husbandry", "Soil Science", "Farm Management"], level: "SS", dept: "Science" },
+  { icon: "💻", title: "Computer Studies", topics: ["Programming", "Database", "Networking", "Software Development"], level: "SS", dept: "Science" },
+  { icon: "💾", title: "Data Processing", topics: ["Database", "Spreadsheets", "Data Types", "File Management"], level: "SS", dept: "Science" },
+  { icon: "🗺️", title: "Geography", topics: ["Map Reading", "Climate", "Population", "Nigeria Geography", "Geomorphology"], level: "SS", dept: "Science" },
+
+  // ===== ART DEPARTMENT =====
+  { icon: "📚", title: "Literature in English", topics: ["Prose", "Poetry", "Drama", "Set Texts", "Criticism"], level: "SS", dept: "Art" },
+  { icon: "🏛️", title: "Government", topics: ["Democracy", "Constitution", "Political Parties", "Legislature", "International Relations"], level: "SS", dept: "Art" },
+  { icon: "📜", title: "History", topics: ["Pre-colonial Nigeria", "Colonial Era", "Independence", "Civil War", "World History"], level: "SS", dept: "Art" },
+  { icon: "🗺️", title: "Geography", topics: ["Map Reading", "Climate", "Population", "Nigeria Geography", "Economic Geography"], level: "SS", dept: "Art" },
+  { icon: "🇫🇷", title: "French", topics: ["Advanced Grammar", "Oral French", "Comprehension", "Translation", "Literature"], level: "SS", dept: "Art" },
+  { icon: "🗣️", title: "Yoruba", topics: ["Advanced Grammar", "Oral", "Literature", "Composition"], level: "SS", dept: "Art" },
+  { icon: "🗣️", title: "Igbo", topics: ["Advanced Grammar", "Oral", "Literature", "Composition"], level: "SS", dept: "Art" },
+  { icon: "🗣️", title: "Hausa", topics: ["Advanced Grammar", "Oral", "Literature", "Composition"], level: "SS", dept: "Art" },
+  { icon: "🎨", title: "Fine Art", topics: ["Drawing", "Painting", "Sculpture", "Graphic Design", "Art History"], level: "SS", dept: "Art" },
+  { icon: "🎵", title: "Music", topics: ["Music Theory", "Harmony", "African Music", "Instruments", "Composition"], level: "SS", dept: "Art" },
+  { icon: "📸", title: "Photography", topics: ["Camera Basics", "Composition", "Lighting", "Darkroom", "Digital Photography"], level: "SS", dept: "Art" },
+  { icon: "🎨", title: "Bleaching & Dyeing", topics: ["Tie & Dye", "Batik", "Colour Theory", "Fabric Treatment"], level: "SS", dept: "Art" },
+  { icon: "👗", title: "Garment Making", topics: ["Sewing", "Pattern Making", "Textile", "Fashion Design"], level: "SS", dept: "Art" },
+  { icon: "🏠", title: "Home Economics", topics: ["Food & Nutrition", "Clothing", "Home Management", "Child Development"], level: "SS", dept: "Art" },
+  { icon: "🏃", title: "Physical Education", topics: ["Athletics", "Team Sports", "Health Education", "Games Rules"], level: "SS", dept: "Art" },
+  { icon: "✏️", title: "Technical Drawing", topics: ["Geometric Drawing", "Orthographic Projection", "Isometric Drawing"], level: "SS", dept: "Art" },
+  { icon: "🤲", title: "Islamic Studies", topics: ["Quran Recitation", "Fiqh", "Islamic History", "Tafsir"], level: "SS", dept: "Art" },
+
+  // ===== COMMERCIAL DEPARTMENT =====
+  { icon: "💰", title: "Economics", topics: ["Demand & Supply", "Market Structure", "National Income", "International Trade", "Monetary Policy"], level: "SS", dept: "Commercial" },
+  { icon: "📊", title: "Financial Accounting", topics: ["Trial Balance", "Balance Sheet", "Profit & Loss", "Ledger", "Cash Book", "Final Accounts"], level: "SS", dept: "Commercial" },
+  { icon: "🛒", title: "Commerce", topics: ["Trade", "Banking", "Insurance", "Transport", "Warehousing", "Advertising"], level: "SS", dept: "Commercial" },
+  { icon: "📋", title: "Office Practice", topics: ["Filing", "Reception", "Office Equipment", "Communication"], level: "SS", dept: "Commercial" },
+  { icon: "⌨️", title: "Typewriting/Keyboarding", topics: ["Keyboard Skills", "Speed", "Accuracy", "Document Production"], level: "SS", dept: "Commercial" },
+  { icon: "✍️", title: "Shorthand", topics: ["Pitman Shorthand", "Speed Writing", "Transcription", "Dictation"], level: "SS", dept: "Commercial" },
+  { icon: "💻", title: "Computer Studies", topics: ["MS Office", "Accounting Software", "Spreadsheets", "Business Applications"], level: "SS", dept: "Commercial" },
+  { icon: "💾", title: "Data Processing", topics: ["Database", "Spreadsheets", "Business Data", "File Management"], level: "SS", dept: "Commercial" },
+  { icon: "🏛️", title: "Government", topics: ["Democracy", "Constitution", "Business Law", "Legislature"], level: "SS", dept: "Commercial" },
+  { icon: "🗺️", title: "Geography", topics: ["Economic Geography", "Trade Routes", "Resources", "Population"], level: "SS", dept: "Commercial" },
+  { icon: "📚", title: "Literature in English", topics: ["Prose", "Poetry", "Drama", "Business Communication"], level: "SS", dept: "Commercial" },
 ];
 
 const LEADERBOARD = [
@@ -596,7 +663,7 @@ function renderAnnouncements() {
   `).join('');
 }
 
-const subjectColors = { Mathematics: 's-math', 'English Language': 's-english', Physics: 's-science', Chemistry: 's-science', Biology: 's-science', 'Basic Science': 's-science', 'Social Studies': 's-social', 'Agric Science': 's-agric', ICT: 's-ict', 'Bible Knowledge': 's-bible', 'Physical Education': 's-pe', Economics: 's-social', 'Further Maths': 's-math', Geography: 's-social', History: 's-social' };
+const subjectColors = { Mathematics: 's-math', 'Further Mathematics': 's-math', 'Further Maths': 's-math', 'English Language': 's-english', 'Literature in English': 's-english', Physics: 's-science', Chemistry: 's-science', Biology: 's-science', 'Basic Science': 's-science', 'Social Studies': 's-social', 'Agric Science': 's-agric', 'Agricultural Science': 's-agric', ICT: 's-ict', 'Computer Studies': 's-ict', 'Data Processing': 's-ict', 'Bible Knowledge': 's-bible', 'CRS': 's-bible', 'Physical Education': 's-pe', Music: 's-pe', Economics: 's-social', Geography: 's-social', History: 's-social', Government: 's-social', Commerce: 's-social', 'Financial Accounting': 's-social', 'Civic Education': 's-social', French: 's-english', 'Home Economics': 's-agric', 'Technical Drawing': 's-ict', 'Garment Making': 's-agric', 'Bleaching & Dyeing': 's-agric', Photography: 's-ict' };
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
 function renderTimetable(cls) {
@@ -645,15 +712,43 @@ function toggleAssign(id) {
 
 function filterAssign(f) { renderAssignments(f); }
 
-function renderNotes() {
+let currentNotesFilter = 'all';
+function filterNotes(dept, btn) {
+  currentNotesFilter = dept;
+  document.querySelectorAll('#page-notes .btn').forEach(b => b.className = 'btn btn-outline');
+  btn.className = 'btn btn-primary';
   const el = document.getElementById('notesList');
-  el.innerHTML = NOTES.map(n => `
-    <div class="note-card" onclick="showToast('Opening ${n.title} notes...')">
+  const filtered = dept === 'all' ? NOTES : NOTES.filter(n => n.dept === dept);
+  const deptColors = { Core: '#dbeafe:#1e40af', Science: '#d1fae5:#065f46', Art: '#fdf4ff:#7e22ce', Commercial: '#fef3c7:#92400e' };
+  el.innerHTML = filtered.map(n => {
+    const [bg, col] = (deptColors[n.dept] || '#f0f4ff:#3730a3').split(':');
+    return `<div class="note-card" onclick="showToast('Opening ' + n.title + ' notes...')">
       <span class="note-icon">${n.icon}</span>
       <div class="note-title">${n.title}</div>
       <div class="note-class">${n.topics.slice(0,2).join(' · ')}</div>
-    </div>
-  `).join('');
+      <div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap">
+        <span style="background:${bg};color:${col};font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace">${n.dept}</span>
+        <span style="background:#f0f4ff;color:#3730a3;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace">${n.level}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderNotes() {
+  const el = document.getElementById('notesList');
+  const deptColors = { Core: '#dbeafe:#1e40af', Science: '#d1fae5:#065f46', Art: '#fdf4ff:#7e22ce', Commercial: '#fef3c7:#92400e' };
+  el.innerHTML = filtered.map(n => {
+    const [bg, col] = (deptColors[n.dept] || '#f0f4ff:#3730a3').split(':');
+    return `<div class="note-card" onclick="showToast('Opening ${n.title} notes...')">
+      <span class="note-icon">${n.icon}</span>
+      <div class="note-title">${n.title}</div>
+      <div class="note-class">${n.topics.slice(0,2).join(' · ')}</div>
+      <div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap">
+        <span style="background:${bg};color:${col};font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace">${n.dept}</span>
+        <span style="background:#f0f4ff;color:#3730a3;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace">${n.level}</span>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function renderLeaderboard() {
