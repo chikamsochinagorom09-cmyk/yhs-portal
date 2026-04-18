@@ -612,11 +612,18 @@ function doLogin() {
   const id = document.getElementById('loginId').value.trim().toUpperCase();
   const pass = document.getElementById('loginPass').value.trim();
   const student = STUDENTS.find(s => s.id === id && s.password === pass);
-  if (student) {
-    currentStudent = student;
+  // Check students
+  const student = STUDENTS.find(s => s.id === id && s.password === pass);
+  // Check teachers
+  const teacher = TEACHERS.find(t => t.id === id && t.password === pass);
+  
+  if (student || teacher) {
+    currentStudent = student || teacher;
+    isTeacher = !!teacher && teacher.id !== 'ADMIN';
+    isAdmin = teacher?.id === 'ADMIN';
     document.getElementById('loginPage').style.display = 'none';
     document.getElementById('mainApp').style.display = 'block';
-    document.getElementById('studentName').textContent = student.name;
+    document.getElementById('studentName').textContent = currentStudent.name + (isAdmin ? ' (Admin)' : isTeacher ? ' (Teacher)' : '');
     renderAll();
   } else {
     document.getElementById('loginError').style.display = 'block';
@@ -722,13 +729,18 @@ function filterNotes(dept, btn) {
   const deptColors = { Core: '#dbeafe:#1e40af', Science: '#d1fae5:#065f46', Art: '#fdf4ff:#7e22ce', Commercial: '#fef3c7:#92400e' };
   el.innerHTML = filtered.map(n => {
     const [bg, col] = (deptColors[n.dept] || '#f0f4ff:#3730a3').split(':');
-    return `<div class="note-card" onclick="showToast('Opening ' + n.title + ' notes...')">
+    const noteData = uploadedNotes[n.title] || null;
+    return `<div class="note-card">
       <span class="note-icon">${n.icon}</span>
       <div class="note-title">${n.title}</div>
       <div class="note-class">${n.topics.slice(0,2).join(' · ')}</div>
       <div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap">
         <span style="background:${bg};color:${col};font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace">${n.dept}</span>
         <span style="background:#f0f4ff;color:#3730a3;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace">${n.level}</span>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+        ${noteData ? `<a href="${noteData.url}" target="_blank" style="background:var(--primary);color:white;font-size:11px;font-weight:700;padding:5px 12px;border-radius:8px;text-decoration:none;font-family:'DM Sans',sans-serif">📄 View Notes</a>` : `<span style="font-size:11px;color:var(--text-faint);font-style:italic">No notes uploaded yet</span>`}
+        ${isTeacher || isAdmin ? `<button onclick="openUploadModal('${n.title}')" style="background:#f0f4ff;color:#3730a3;font-size:11px;font-weight:700;padding:5px 12px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif">📎 ${noteData ? 'Update' : 'Upload'}</button>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -739,13 +751,18 @@ function renderNotes() {
   const deptColors = { Core: '#dbeafe:#1e40af', Science: '#d1fae5:#065f46', Art: '#fdf4ff:#7e22ce', Commercial: '#fef3c7:#92400e' };
   el.innerHTML = filtered.map(n => {
     const [bg, col] = (deptColors[n.dept] || '#f0f4ff:#3730a3').split(':');
-    return `<div class="note-card" onclick="showToast('Opening ${n.title} notes...')">
+    const noteData = uploadedNotes[n.title] || null;
+    return `<div class="note-card">
       <span class="note-icon">${n.icon}</span>
       <div class="note-title">${n.title}</div>
       <div class="note-class">${n.topics.slice(0,2).join(' · ')}</div>
       <div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap">
         <span style="background:${bg};color:${col};font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace">${n.dept}</span>
         <span style="background:#f0f4ff;color:#3730a3;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace">${n.level}</span>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+        ${noteData ? `<a href="${noteData.url}" target="_blank" style="background:var(--primary);color:white;font-size:11px;font-weight:700;padding:5px 12px;border-radius:8px;text-decoration:none;font-family:'DM Sans',sans-serif">📄 View Notes</a>` : `<span style="font-size:11px;color:var(--text-faint);font-style:italic">No notes yet</span>`}
+        ${isTeacher || isAdmin ? `<button onclick="openUploadModal('${n.title}')" style="background:#f0f4ff;color:#3730a3;font-size:11px;font-weight:700;padding:5px 12px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif">📎 ${noteData ? 'Update' : 'Upload'}</button>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -861,6 +878,47 @@ async function sendChat() {
   msgs.scrollTop = msgs.scrollHeight;
 }
 
+// ========== NOTES UPLOAD ==========
+let uploadedNotes = JSON.parse(localStorage.getItem('yhs_notes') || '{}');
+let isTeacher = false;
+let isAdmin = false;
+
+const TEACHERS = [
+  { id: "TCH001", name: "Mr. Adeyemi", subject: "Mathematics", password: "teacher2025" },
+  { id: "TCH002", name: "Mrs. Okafor", subject: "English Language", password: "teacher2025" },
+  { id: "TCH003", name: "Mr. Nwosu", subject: "Chemistry", password: "teacher2025" },
+  { id: "ADMIN", name: "Administrator", subject: "All", password: "YHS@2025" },
+];
+
+function openUploadModal(subject) {
+  document.getElementById('uploadModal').style.display = 'flex';
+  document.getElementById('modalSubject').value = subject;
+  document.getElementById('modalNoteTitle').value = uploadedNotes[subject]?.title || '';
+  document.getElementById('modalUrl').value = uploadedNotes[subject]?.url || '';
+  document.getElementById('modalTitle').textContent = 'Upload Notes — ' + subject;
+}
+
+function closeModal() {
+  document.getElementById('uploadModal').style.display = 'none';
+}
+
+function saveNote() {
+  const subject = document.getElementById('modalSubject').value;
+  const title = document.getElementById('modalNoteTitle').value.trim();
+  const url = document.getElementById('modalUrl').value.trim();
+  if (!url) { showToast('Please paste a document link!'); return; }
+  uploadedNotes[subject] = { title: title || subject + ' Notes', url, uploadedBy: currentStudent?.name || 'Teacher', date: new Date().toLocaleDateString() };
+  localStorage.setItem('yhs_notes', JSON.stringify(uploadedNotes));
+  closeModal();
+  filterNotes('all', document.querySelector('#page-notes .btn-primary') || document.querySelector('#page-notes .btn'));
+  showToast('Notes uploaded successfully! ✅');
+}
+
+// Close modal when clicking outside
+document.getElementById('uploadModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
 // ========== TOAST ==========
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -869,5 +927,29 @@ function showToast(msg) {
   setTimeout(() => { t.style.display = 'none'; }, 3000);
 }
 </script>
+
+<!-- UPLOAD MODAL -->
+<div id="uploadModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;align-items:center;justify-content:center">
+  <div style="background:white;border-radius:20px;padding:32px;width:100%;max-width:480px;margin:16px;box-shadow:0 20px 60px rgba(0,0,0,0.2)">
+    <h3 style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:4px" id="modalTitle">Upload Notes</h3>
+    <p style="font-size:13px;color:var(--text-faint);margin-bottom:20px">Paste a Google Drive, Dropbox or any public link to the PDF or Word document</p>
+    
+    <label style="font-size:11px;font-weight:700;color:var(--text-faint);letter-spacing:0.08em;display:block;margin-bottom:6px">SUBJECT</label>
+    <input id="modalSubject" readonly style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;background:#f8f9ff;margin-bottom:14px;color:var(--text)" />
+    
+    <label style="font-size:11px;font-weight:700;color:var(--text-faint);letter-spacing:0.08em;display:block;margin-bottom:6px">DOCUMENT TITLE</label>
+    <input id="modalNoteTitle" placeholder="e.g. Chapter 3 - Quadratic Equations" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:14px;outline:none;color:var(--text)" />
+    
+    <label style="font-size:11px;font-weight:700;color:var(--text-faint);letter-spacing:0.08em;display:block;margin-bottom:6px">GOOGLE DRIVE / DOCUMENT LINK</label>
+    <input id="modalUrl" placeholder="https://drive.google.com/file/d/..." style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:6px;outline:none;color:var(--text)" />
+    <p style="font-size:11px;color:var(--text-faint);margin-bottom:20px">💡 Tip: In Google Drive, right-click the file → Share → Copy link → Paste here</p>
+    
+    <div style="display:flex;gap:10px">
+      <button onclick="saveNote()" style="flex:1;padding:13px;background:var(--primary);color:white;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer">Save Notes →</button>
+      <button onclick="closeModal()" style="padding:13px 20px;background:#f0f4ff;color:var(--text);border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">Cancel</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
