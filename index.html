@@ -236,7 +236,7 @@
     <input class="login-input" type="password" id="loginPass" placeholder="Enter your password" />
     <div class="login-error" id="loginError" style="display:none">Invalid Student ID or Password</div>
     <button class="login-btn" onclick="doLogin()">Login to Portal →</button>
-    <p style="margin-top:16px;font-size:12px;color:var(--text-faint)">Demo: ID = <b>YHS001</b> · Password = <b>yhs2025</b></p>
+    <p style="margin-top:16px;font-size:12px;color:var(--text-faint)">Student: <b>YHS001</b> / <b>yhs2025</b><br>Teacher: <b>TCH001</b> / <b>teacher2025</b><br>Admin: <b>ADMIN</b> / <b>YHS@2025</b></p>
   </div>
 </div>
 
@@ -612,18 +612,16 @@ function doLogin() {
   const id = document.getElementById('loginId').value.trim().toUpperCase();
   const pass = document.getElementById('loginPass').value.trim();
   const student = STUDENTS.find(s => s.id === id && s.password === pass);
-  // Check students
-  const student = STUDENTS.find(s => s.id === id && s.password === pass);
-  // Check teachers
   const teacher = TEACHERS.find(t => t.id === id && t.password === pass);
-  
-  if (student || teacher) {
-    currentStudent = student || teacher;
-    isTeacher = !!teacher && teacher.id !== 'ADMIN';
-    isAdmin = teacher?.id === 'ADMIN';
+  const found = student || teacher;
+
+  if (found) {
+    currentStudent = found;
+    isAdmin = found.id === 'ADMIN';
+    isTeacher = !!teacher && !isAdmin;
     document.getElementById('loginPage').style.display = 'none';
     document.getElementById('mainApp').style.display = 'block';
-    document.getElementById('studentName').textContent = currentStudent.name + (isAdmin ? ' (Admin)' : isTeacher ? ' (Teacher)' : '');
+    document.getElementById('studentName').textContent = found.name + (isAdmin ? ' 👑 Admin' : isTeacher ? ' 📝 Teacher' : '');
     renderAll();
   } else {
     document.getElementById('loginError').style.display = 'block';
