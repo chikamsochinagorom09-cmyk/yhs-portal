@@ -610,7 +610,7 @@ const SYSTEM_PROMPT = `You are the official AI Assistant for Yeshua High School,
 // ========== LOGIN ==========
 function doLogin() {
   const id = document.getElementById('loginId').value.trim().toUpperCase();
-  const pass = document.getElementById('loginPass').value.trim();
+  const pass = document.getElementById('loginPass').value;
   const student = STUDENTS.find(s => s.id === id && s.password === pass);
   const teacher = TEACHERS.find(t => t.id === id && t.password === pass);
   const found = student || teacher;
