@@ -7,20 +7,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #8b1a1a;
-      --primary-light: #c0392b;
+      --primary: #6b0f1a;
+      --primary-light: #8b1a1a;
       --gold: #c9a84c;
-      --bg: #f7f8fc;
+      --bg: #fff0f0;
       --surface: #ffffff;
-      --border: #e2e6f0;
-      --text: #1a1a2e;
-      --text-dim: #5a6072;
-      --text-faint: #9ca3af;
-      --shadow: 0 2px 16px rgba(0,0,0,0.07);
+      --border: #f5c6c6;
+      --text: #1a0a0a;
+      --text-dim: #5a2a2a;
+      --text-faint: #b07070;
+      --shadow: 0 2px 16px rgba(107,15,26,0.08);
       --radius: 16px;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    body { font-family: 'DM Sans', sans-serif; background: linear-gradient(135deg, #fff0f0 0%, #ffffff 50%, #fff0f0 100%); color: var(--text); min-height: 100vh; }
 
     /* HEADER */
     .header { background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); }
@@ -194,7 +194,7 @@
     @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
     /* LOGIN */
-    .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #fff5f5 0%, #f7f8fc 100%); }
+    .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #6b0f1a 0%, #8b1a1a 40%, #fff0f0 100%); }
     .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 48px; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); text-align: center; }
     .login-logo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin: 0 auto 16px; display: block; box-shadow: 0 0 0 8px rgba(139,26,26,0.08); }
     .login-school { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
