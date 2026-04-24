@@ -604,7 +604,7 @@ let assignments = [...ASSIGNMENTS];
 let forumPosts = [...FORUM_DATA];
 let currentClass = 'JSS1A';
 
-const API_KEY = "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";
+const API_KEY = "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";
 const SYSTEM_PROMPT = `You are the official AI Assistant for Yeshua High School, Nigeria. Your name is "YHS Assistant". You help secondary school students (JSS1-SS3) with: homework, academic questions, Bible verses, Christian devotions, motivational messages, study tips, and school-related questions. Be warm, encouraging, and faith-based. School motto: "Jesus Our Perfect Example". Always end with a short encouraging note or Bible verse when appropriate.`;
 
 // ========== LOGIN ==========
@@ -853,18 +853,16 @@ async function sendChat() {
   msgs.scrollTop = msgs.scrollHeight;
 
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": API_KEY,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true"
+        "Authorization": "Bearer " + API_KEY
       },
-      body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 1000, system: SYSTEM_PROMPT, messages: chatMessages })
+      body: JSON.stringify({ model: "llama-3.3-70b-versatile", max_tokens: 1000, messages: [{ role: "system", content: SYSTEM_PROMPT }, ...chatMessages] })
     });
     const data = await res.json();
-    const reply = data.error ? "Sorry, I couldn't respond right now. Please try again! 🙏" : (data.content?.[0]?.text || "No response received.");
+    const reply = data.error ? "Sorry, I couldn't respond right now. Please try again! 🙏" : (data.choices?.[0]?.message?.content || "No response received.");
     chatMessages.push({ role: "assistant", content: reply });
     document.getElementById(typingId).outerHTML = `<div class="chat-bubble"><div class="chat-avatar ai">✝</div><div class="chat-text ai">${reply.replace(/\n/g, '<br>')}</div></div>`;
   } catch {
